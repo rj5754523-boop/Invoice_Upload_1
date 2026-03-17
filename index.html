@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accounts Receivable • Invoice Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <h1>LedgerFlow</h1>
+        <nav>
+          <a class="active" href="#">Accounts Receivable</a>
+          <a href="#">Invoices</a>
+          <a href="#">Customers</a>
+          <a href="#">Reports</a>
+          <a href="#">Settings</a>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Finance Workspace</p>
+            <h2 id="pageTitle">Accounts Receivable</h2>
+          </div>
+          <div class="cta-group" id="mainCtas">
+            <button class="btn btn-secondary">
+              <span class="icon">⟳</span>
+              Sync
+            </button>
+            <button class="btn btn-primary">
+              <span class="icon">＋</span>
+              Create Invoice
+            </button>
+            <button class="btn btn-primary" id="uploadInvoicesBtn">
+              <span class="icon">⤴</span>
+              Upload Invoices
+            </button>
+          </div>
+          <div class="cta-group hidden" id="previewCtas">
+            <button class="btn btn-secondary" id="backToHistory">Back to History</button>
+            <button class="btn btn-primary">
+              <span class="icon">⇄</span>
+              Change Mapping
+            </button>
+          </div>
+        </header>
+
+        <section id="accountsPage" class="page active">
+          <div class="card stats-grid">
+            <div>
+              <p class="label">Outstanding</p>
+              <h3>$248,400</h3>
+            </div>
+            <div>
+              <p class="label">Overdue</p>
+              <h3 class="danger">$46,230</h3>
+            </div>
+            <div>
+              <p class="label">Due this week</p>
+              <h3>$17,820</h3>
+            </div>
+            <div>
+              <p class="label">Last sync</p>
+              <h3>Today, 09:42</h3>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="section-title">Invoice Aging Overview</h3>
+            <p class="subtle">
+              Use bulk upload to ingest Excel invoices and map column structures before posting.
+            </p>
+          </div>
+        </section>
+
+        <section id="historyPage" class="page">
+          <div class="card">
+            <div class="table-header">
+              <div>
+                <h3 class="section-title">Invoice Upload History</h3>
+                <p class="subtle">Track upload progress, mapping completion, and sync readiness.</p>
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>
+                      <div class="th-label">File Name</div>
+                      <input type="text" class="filter" placeholder="Filter files" />
+                    </th>
+                    <th>
+                      <div class="th-label">Uploaded At</div>
+                      <input type="text" class="filter" placeholder="YYYY-MM-DD" />
+                    </th>
+                    <th>
+                      <div class="th-label">Status</div>
+                      <input type="text" class="filter" placeholder="Extracting / Failed" />
+                    </th>
+                    <th>
+                      <div class="th-label">Synced</div>
+                      <input type="text" class="filter" placeholder="Yes / No" />
+                    </th>
+                    <th>
+                      <div class="th-label">Pending Actions</div>
+                      <input type="text" class="filter" placeholder="Needs review" />
+                    </th>
+                    <th>
+                      <div class="th-label">Actions</div>
+                      <input type="text" class="filter" placeholder="View" />
+                    </th>
+                    <th>
+                      <div class="th-label">Delete</div>
+                      <input type="text" class="filter" placeholder="Delete" />
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="mappingPage" class="page">
+          <div class="card">
+            <h3 class="section-title">Column Mapping — Step 1</h3>
+            <p class="subtle">
+              Mapping has not been saved for this file. Match incoming spreadsheet columns to your
+              invoice schema before preview.
+            </p>
+          </div>
+        </section>
+
+        <section id="previewPage" class="page">
+          <div class="card">
+            <h3 class="section-title">Import Preview — Needs Review</h3>
+            <p class="subtle">
+              Spreadsheet rows are ready for validation. "Change Mapping" remains available in the
+              top bar until rows are saved.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop hidden" id="uploadModalBackdrop">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="uploadModalTitle">
+        <div class="modal-header">
+          <h3 id="uploadModalTitle">Upload Excel Invoices</h3>
+          <button class="icon-btn" id="closeModalBtn" aria-label="Close upload modal">✕</button>
+        </div>
+
+        <div class="dropzone" id="dropzone">
+          <input id="fileInput" type="file" accept=".xls,.xlsx" multiple />
+          <p>Drag and drop Excel files here</p>
+          <button class="link-btn" id="filePickerBtn">Click here to upload</button>
+        </div>
+
+        <ul class="file-list" id="fileList"></ul>
+
+        <div class="helper-text">
+          <p>Supported formats: XLS, XLSX</p>
+          <p>Maximum file size: 10MB per file</p>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-ghost" id="cancelUploadBtn">Cancel</button>
+          <button class="btn btn-primary" id="uploadPreviewBtn">Upload &amp; Preview</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="drawer hidden" id="errorDrawer">
+      <div class="drawer-header">
+        <h4>Error Details</h4>
+        <button class="icon-btn" id="closeDrawerBtn">✕</button>
+      </div>
+      <p>
+        Failed parsing <strong>july-bulk-ar.xlsx</strong>. Missing required column: <code>Invoice
+        Number</code>.
+      </p>
+    </aside>
+
+    <script src="app.js"></script>
+  </body>
+</html>
